@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Venta - POS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/Detalles.css}">
+</head>
+<body>
+
+<div class="container-fluid px-5 mt-4">
+    <h1 class="titulo-seccion text-center mb-4">SISTEMA DE DETALLES DE VENTA</h1>
+
+    <div class="btn-toolbar-custom mb-4 d-flex justify-content-start gap-2">
+        <a th:href="@{/Home}" class="btn btn-outline-warning btn-custom"><i class="bi bi-house"></i> Inicio</a>
+        <button type="button" class="btn btn-info text-white btn-custom" onclick="accionBuscar()"><i class="bi bi-search"></i> Buscar por ID</button>
+        <button type="button" class="btn btn-success btn-custom" onclick="prepararNuevo()"><i class="bi bi-plus-circle"></i> Nuevo Registro</button>
+        <button type="button" class="btn btn-warning fw-bold btn-custom" onclick="accionGestionar()"><i class="bi bi-gear-fill"></i> Gestionar ID</button>
+    </div>
+
+    <div class="tabla-contenedor shadow-lg">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+            <tr>
+                <th>ID Detalle</th>
+                <th>ID Venta</th>
+                <th>ID Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${listaDetalles}">
+                <td th:text="${d.codigoDetalleVenta}" class="fw-bold"></td>
+                <td th:text="${d.ventasCodigoVenta}"></td>
+                <td th:text="${d.productosCodigoProducto}"></td>
+                <td th:text="${d.cantidad}"></td>
+                <td th:text="${'Q' + d.precioUnitario}"></td>
+                <td th:text="${'Q' + d.subtotal}" class="text-success fw-bold"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade text-dark" id="modalDetalle" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-warning">
+                <h5 class="modal-title" id="modalTitulo">Datos del Detalle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="inputCodigo">
+                <div class="mb-3">
+                    <label class="fw-bold">ID Venta</label>
+                    <input type="number" id="inputVenta" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold">ID Producto</label>
+                    <input type="number" id="inputProducto" class="form-control">
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label class="fw-bold">Cantidad</label>
+                        <input type="number" id="inputCantidad" class="form-control" oninput="calcularSubtotal()">
+                    </div>
+                    <div class="col-6">
+                        <label class="fw-bold">Precio</label>
+                        <input type="number" step="0.01" id="inputPrecio" class="form-control" oninput="calcularSubtotal()">
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <label class="fw-bold text-success">Subtotal Automático</label>
+                    <input type="number" id="inputSubtotal" class="form-control bg-light fw-bold text-success" readonly>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger me-auto" id="btnEliminar" onclick="ejecutarEliminar()" style="display:none;">Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning fw-bold" id="btnGuardar" onclick="ejecutarGuardado()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let miModal;
+    document.addEventListener("DOMContentLoaded", () => {
+        miModal = new bootstrap.Modal(document.getElementById('modalDetalle'));
+    });
+
+    function calcularSubtotal() {
+        const c = parseFloat(document.getElementById('inputCantidad').value) || 0;
+        const p = parseFloat(document.getElementById('inputPrecio').value) || 0;
+        document.getElementById('inputSubtotal').value = (c * p).toFixed(2);
+    }
+
+    function accionBuscar() { const id = prompt("ID del detalle:"); if(id) cargarDatos(id, true); }
+    function accionGestionar() { const id = prompt("ID del detalle:"); if(id) cargarDatos(id, false); }
+
+    function prepararNuevo() {
+        limpiarForm();
+        setModo(true);
+        document.getElementById('modalTitulo').innerText = "Nuevo Detalle";
+        document.getElementById('btnEliminar').style.display="none";
+        miModal.show();
+    }
+
+    async function cargarDatos(id, soloLectura) {
+        try {
+            const res = await fetch(`/detalles/${id}`);
+            if(!res.ok) throw new Error();
+            const d = await res.json();
+            document.getElementById('inputCodigo').value = d.codigoDetalleVenta;
+            document.getElementById('inputVenta').value = d.ventasCodigoVenta;
+            document.getElementById('inputProducto').value = d.productosCodigoProducto;
+            document.getElementById('inputCantidad').value = d.cantidad;
+            document.getElementById('inputPrecio').value = d.precioUnitario;
+            document.getElementById('inputSubtotal').value = d.subtotal;
+            document.getElementById('modalTitulo').innerText = soloLectura ? "Consulta" : "Editar";
+            setModo(!soloLectura);
+            miModal.show();
+        } catch(e) { alert("ID no encontrado."); }
+    }
+
+    function setModo(e) {
+        ['inputVenta','inputProducto','inputCantidad','inputPrecio'].forEach(i => document.getElementById(i).readOnly = !e);
+        document.getElementById('btnGuardar').style.display = e ? "block" : "none";
+        document.getElementById('btnEliminar').style.display = (e && document.getElementById('inputCodigo').value) ? "block" : "none";
+    }
+
+    async function ejecutarGuardado() {
+        const id = document.getElementById('inputCodigo').value;
+        const payload = {
+            codigoDetalleVenta: id ? parseInt(id) : null,
+            ventasCodigoVenta: parseInt(document.getElementById('inputVenta').value),
+            productosCodigoProducto: parseInt(document.getElementById('inputProducto').value),
+            cantidad: parseInt(document.getElementById('inputCantidad').value),
+            precioUnitario: parseFloat(document.getElementById('inputPrecio').value),
+            subtotal: parseFloat(document.getElementById('inputSubtotal').value)
+        };
+
+        const res = await fetch('/detalles', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) location.reload();
+        else alert("Error al guardar. Verifica que los IDs de Venta y Producto existan.");
+    }
+
+    async function ejecutarEliminar() {
+        const id = document.getElementById('inputCodigo').value;
+        if(confirm("¿Eliminar registro?")) {
+            await fetch(`/detalles/${id}`, {method: 'DELETE'});
+            location.reload();
+        }
+    }
+
+    function limpiarForm() {
+        document.getElementById('inputCodigo').value = "";
+        ['inputVenta','inputProducto','inputCantidad','inputPrecio','inputSubtotal'].forEach(i => document.getElementById(i).value = "");
+    }
+</script>
+</body>
+</html>

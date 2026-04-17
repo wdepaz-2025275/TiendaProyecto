@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Tienda POS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --azul-profundo: #1a237e;
+            --azul-claro: #1565c0;
+            --amarillo-pos: #f1c40f;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--azul-profundo), #121212);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        .card {
+            display: flex;
+            width: 750px;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .left {
+            width: 40%;
+            /* Cambiado a degradado azul para combinar con el sistema */
+            background: linear-gradient(135deg, var(--azul-profundo), var(--azul-claro));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .left i { font-size: 5rem; color: var(--amarillo-pos); margin-bottom: 10px; }
+
+        .right {
+            width: 60%;
+            padding: 50px;
+            text-align: center;
+        }
+
+        h2 { color: var(--azul-profundo); font-weight: 700; margin-bottom: 25px; }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #f8fafc;
+            color: var(--azul-profundo);
+            box-sizing: border-box; /* Asegura que el padding no desborde */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--azul-claro);
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--azul-profundo);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: var(--azul-claro);
+            transform: translateY(-2px);
+        }
+
+        .switch { margin-top: 20px; }
+
+        .switch a {
+            text-decoration: none;
+            color: var(--azul-claro);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="left">
+        <i class="bi bi-person-plus-fill"></i>
+        <h4 style="color: white !important;">Únete a nosotros</h4>
+        <p style="font-size: 0.8rem; opacity: 0.8; color: white !important;">Crea tu cuenta de administrador para la Tienda POS</p>
+    </div>
+
+    <div class="right">
+        <h2>Registro</h2>
+
+        <div th:if="${success}" class="success">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${success}"></span>
+        </div>
+
+        <form th:action="@{/registro}" method="post">
+            <input type="text" name="usuario" placeholder="Nombre de Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña Segura" required>
+            <button type="submit">Crear Cuenta</button>
+        </form>
+
+        <div class="switch">
+            <a th:href="@{/login}">¿Ya tienes cuenta? Inicia sesión</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

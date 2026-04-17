@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clientes - POS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/Clientes.css}">
+</head>
+<body>
+
+<div class="container-fluid px-5 mt-4">
+    <h1 class="titulo-seccion text-center mb-4">SISTEMA DE GESTIÓN DE CLIENTES</h1>
+
+    <div class="btn-toolbar-custom mb-4 d-flex justify-content-start gap-2">
+        <a th:href="@{/Home}" class="btn btn-outline-warning btn-custom"><i class="bi bi-house"></i> Inicio</a>
+        <button type="button" class="btn btn-info text-white btn-custom" onclick="accionBuscar()"><i class="bi bi-search"></i> Buscar DPI</button>
+        <button type="button" class="btn btn-success btn-custom" onclick="prepararNuevo()"><i class="bi bi-person-plus-fill"></i> Nuevo Cliente</button>
+        <button type="button" class="btn btn-warning fw-bold btn-custom" onclick="accionGestionar()"><i class="bi bi-gear-fill"></i> Gestionar ID</button>
+    </div>
+
+    <div class="tabla-contenedor shadow-lg">
+        <table class="table table-hover mb-0">
+            <thead class="table-dark">
+            <tr>
+                <th style="width: 15%;">DPI</th>
+                <th style="width: 20%;">Nombre</th>
+                <th style="width: 20%;">Apellido</th>
+                <th style="width: 30%;">Dirección</th>
+                <th style="width: 15%;">Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${clientes}">
+                <td th:text="${c.dpiCliente}" class="fw-bold"></td>
+                <td th:text="${c.nombreCliente}"></td>
+                <td th:text="${c.apellidoCliente}"></td>
+                <td th:text="${c.direccion}"></td>
+                <td class="text-center align-middle">
+                        <span th:text="${c.estado == 1 ? 'Activo' : 'Inactivo'}"
+                              th:class="${c.estado == 1 ? 'texto-verde' : 'texto-rojo'}">
+                        </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade text-dark" id="modalCliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-warning">
+                <h5 class="modal-title" id="modalTitulo">Datos del Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="inputDpi">
+                <div class="mb-3">
+                    <label class="fw-bold small">Nombre</label>
+                    <input type="text" id="inputNombre" class="form-control" placeholder="Nombres del cliente">
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold small">Apellido</label>
+                    <input type="text" id="inputApellido" class="form-control" placeholder="Apellidos del cliente">
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold small">Dirección</label>
+                    <input type="text" id="inputDireccion" class="form-control" placeholder="Ej: 5ta Ave. Zona 1">
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold small">Estado del Cliente</label>
+                    <select id="selectEstado" class="form-select">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger me-auto" id="btnEliminar" onclick="ejecutarEliminar()" style="display:none;">Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning fw-bold" id="btnGuardar" onclick="ejecutarGuardado()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let miModal;
+    document.addEventListener("DOMContentLoaded", () => {
+        miModal = new bootstrap.Modal(document.getElementById('modalCliente'));
+    });
+
+    function accionBuscar() { const id = prompt("DPI del cliente:"); if(id) cargarDatos(id, true); }
+    function accionGestionar() { const id = prompt("DPI del cliente:"); if(id) cargarDatos(id, false); }
+
+    function prepararNuevo() {
+        limpiarForm();
+        setModo(true);
+        document.getElementById('modalTitulo').innerText = "Nuevo Registro";
+        document.getElementById('btnEliminar').style.display="none";
+        miModal.show();
+    }
+
+    async function cargarDatos(id, soloLectura) {
+        try {
+            const res = await fetch(`/clientes/${id}`);
+            if(!res.ok) throw new Error();
+            const c = await res.json();
+
+            document.getElementById('inputDpi').value = c.dpiCliente;
+            document.getElementById('inputNombre').value = c.nombreCliente;
+            document.getElementById('inputApellido').value = c.apellidoCliente;
+            document.getElementById('inputDireccion').value = c.direccion;
+            document.getElementById('selectEstado').value = c.estado;
+
+            document.getElementById('modalTitulo').innerText = soloLectura ? "Consulta" : "Editar Cliente";
+            setModo(!soloLectura);
+            miModal.show();
+        } catch(e) { alert("DPI no encontrado."); }
+    }
+
+    function setModo(e) {
+        ['inputNombre','inputApellido','inputDireccion','selectEstado'].forEach(i => {
+            const el = document.getElementById(i);
+            if(el.tagName === "SELECT") el.disabled = !e;
+            else el.readOnly = !e;
+        });
+        document.getElementById('btnGuardar').style.display = e ? "block" : "none";
+        document.getElementById('btnEliminar').style.display = (e && document.getElementById('inputDpi').value) ? "block" : "none";
+    }
+
+    async function ejecutarGuardado() {
+        const id = document.getElementById('inputDpi').value;
+        const payload = {
+            dpiCliente: id ? parseInt(id) : null,
+            nombreCliente: document.getElementById('inputNombre').value,
+            apellidoCliente: document.getElementById('inputApellido').value,
+            direccion: document.getElementById('inputDireccion').value,
+            estado: parseInt(document.getElementById('selectEstado').value)
+        };
+
+        const res = await fetch(id ? `/clientes/${id}` : '/clientes', {
+            method: id ? 'PUT' : 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) location.reload();
+        else alert("Error al procesar el registro.");
+    }
+
+    async function ejecutarEliminar() {
+        const id = document.getElementById('inputDpi').value;
+        if(confirm("¿Eliminar este cliente?")) {
+            await fetch(`/clientes/${id}`, {method: 'DELETE'});
+            location.reload();
+        }
+    }
+
+    function limpiarForm() {
+        document.getElementById('inputDpi').value = "";
+        ['inputNombre','inputApellido','inputDireccion'].forEach(i => document.getElementById(i).value = "");
+        document.getElementById('selectEstado').value = "1";
+    }
+</script>
+</body>
+</html>
