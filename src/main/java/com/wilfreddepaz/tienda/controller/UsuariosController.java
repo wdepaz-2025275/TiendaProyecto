@@ -15,30 +15,6 @@ public class UsuariosController {
         this.usuariosService = usuariosService;
     }
 
-    @GetMapping("/registro")
-    public String mostrarFormularioRegistro() {
-        return "registro";
-    }
-
-    @PostMapping("/registro")
-    public String registrarNuevoUsuario(@ModelAttribute Usuarios usuarios, Model model) {
-        try {
-            usuarios.setEstado(1); // 1 = Activo
-            usuarios.setRol("USER"); // Rol por defecto
-
-            if (usuarios.getEmail() == null || usuarios.getEmail().isEmpty()) {
-                usuarios.setEmail(usuarios.getUsername() + "@tienda.com");
-            }
-
-            usuariosService.saveUsuario(usuarios);
-            model.addAttribute("success", "¡Cuenta creada con éxito! Ahora puedes iniciar sesión.");
-
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al registrar el usuario: " + e.getMessage());
-        }
-        return "registro";
-    }
-
     @GetMapping("/usuarios")
     public String verUsuarios(Model model) {
         model.addAttribute("listaUsuarios", usuariosService.getAllUsuarios());
@@ -55,6 +31,13 @@ public class UsuariosController {
     @ResponseBody
     public Usuarios guardarApi(@RequestBody Usuarios usuarios) {
         if (usuarios.getEstado() == null) usuarios.setEstado(1);
+        return usuariosService.saveUsuario(usuarios);
+    }
+
+    @PutMapping("/usuarios/api/{id}")
+    @ResponseBody
+    public Usuarios actualizarApi(@PathVariable Integer id, @RequestBody Usuarios usuarios) {
+        usuarios.setCodigoUsuario(id);
         return usuariosService.saveUsuario(usuarios);
     }
 
