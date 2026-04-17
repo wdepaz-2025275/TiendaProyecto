@@ -1,99 +1,86 @@
-/* --- Global --- */
 body {
-    background-color: #f4f7fa;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow-x: hidden;
-}
-
-#wrapper {
-    display: flex;
+    background-color: #0f172a;
+    background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
     min-height: 100vh;
+    font-family: 'Inter', sans-serif;
 }
 
-/* --- Sidebar --- */
-#sidebar-container {
-    width: 260px;
-    min-width: 260px;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-    z-index: 1000;
+.navbar {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.sidebar-logo {
-    background-color: #0b132b; /* Azul medianoche */
+.hero-section {
+    height: 400px;
+    background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') center/cover;
+    position: relative;
 }
 
-.sidebar-nav .nav-item {
+.hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.2), #0f172a);
+}
+
+.glass-banner {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-module {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 41, 59, 0.7);
+    padding: 25px 15px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: center;
+    color: white;
+}
+
+.card-module:hover {
+    transform: translateY(-12px);
+    background: rgba(162, 155, 254, 0.15);
+    border-color: #a29bfe;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
-    padding: 14px 25px;
-    color: #5a6a85;
-    text-decoration: none;
-    font-size: 0.95rem;
-    gap: 12px;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
     transition: 0.3s;
 }
 
-.sidebar-nav .nav-item:hover {
-    background-color: #f8f9ff;
-    color: #2b50ed;
-}
+.bg-user { background: #6366f1; }
+.bg-client { background: #10b981; }
+.bg-prod { background: #f59e0b; }
+.bg-sale { background: #ec4899; }
+.bg-detail { background: #06b6d4; }
 
-.sidebar-nav .nav-item.active {
-    background-color: #eef2ff;
-    color: #2b50ed;
-    font-weight: 600;
-    border-left: 5px solid #2b50ed;
-}
+.card-module h5 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+.card-module p { margin: 0; font-size: 0.8rem; opacity: 0.6; }
 
-/* --- Topbar & Avatar --- */
-header.navbar {
-    height: 70px;
-}
-
-/* AJUSTE PARA TU FOTO DE PERFIL */
 .profile-avatar {
-    width: 45px;          /* Un poco más grande para que luzca */
-    height: 45px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid #0b132b; /* Borde azul para combinar con el logo */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f8f9fa;
-    transition: transform 0.2s;
+    border: 2px solid #a29bfe;
 }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-.profile-avatar:hover {
-    transform: scale(1.1); /* Efecto sutil al pasar el mouse */
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;    /* ESTO EVITA QUE TU FOTO SE ESTIRE */
-    display: block;
-}
-
-/* --- Banner & Hero --- */
-.welcome-banner {
-    background: linear-gradient(135deg, #0b132b 0%, #1a38b1 100%);
-}
-
-.hero-icon {
-    background: white;
-    width: 180px;
-    height: 180px;
-    margin: 0 auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e0e0e0;
-}
-
-/* --- Lógica de Colapso --- */
-#wrapper.collapsed #sidebar-container {
-    margin-left: -260px;
-}
+.op-8 { opacity: 0.8; }
+.op-7 { opacity: 0.7; }
