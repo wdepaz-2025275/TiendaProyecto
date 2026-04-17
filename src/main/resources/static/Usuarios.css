@@ -59,7 +59,6 @@ tbody tr:nth-child(even) {
     background-color: #fcf3cf;
 }
 
-/* Estilo para el botón de volver (fuera de la tabla) */
 .btn-volver {
     display: inline-block;
     padding: 15px 30px;
@@ -77,7 +76,6 @@ tbody tr:nth-child(even) {
     color: white;
 }
 
-/* Deshabilitar interacción solo en la tabla para que el botón funcione */
 table {
     pointer-events: none;
     user-select: none;
