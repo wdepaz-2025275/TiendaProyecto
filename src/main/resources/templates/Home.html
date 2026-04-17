@@ -5,75 +5,81 @@
     <title>Home - Sistema Tienda Wilfred</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/Home.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
 
-<nav class="navbar navbar-custom sticky-top shadow-lg">
-    <div class="container d-flex justify-content-between align-items-center">
-        <h3 class="m-0 fw-bold">TIENDA <span style="color: #a29bfe;">WILFRED</span></h3>
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-white" href="#">
+            TIENDA <span style="color: #a29bfe;">WILFRED</span>
+        </a>
 
         <div class="d-flex align-items-center">
-            <img th:src="${session.usuario.username == 'wilfred'} ? @{/img/Perfil.jpg} : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'"
-                 class="img-perfil me-3"
-                 alt="Perfil">
-
-            <div class="text-start me-4">
-                <p class="m-0 fw-bold" th:text="${session.usuario.username}" style="font-size: 1rem; line-height: 1;">username</p>
-                <small class="text-uppercase" style="color: #a29bfe; font-size: 0.75rem; font-weight: 800;" th:text="${session.usuario.rol}">rol</small>
+            <div class="profile-avatar me-3">
+                <img th:src="${session.usuario.username == 'wilfred'} ? @{/img/Perfil.jpg} : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'" alt="Perfil">
             </div>
-
-            <a th:href="@{/logout}" class="btn btn-salir btn-sm px-4">SALIR</a>
+            <div class="text-start me-4 text-white d-none d-md-block">
+                <p class="m-0 fw-bold lh-1" th:text="${session.usuario.username}">Username</p>
+                <small class="text-uppercase op-7" style="color: #a29bfe; font-size: 0.7rem;" th:text="${session.usuario.rol}">Administrador</small>
+            </div>
+            <a th:href="@{/logout}" class="btn btn-outline-light btn-sm px-3 rounded-pill">SALIR</a>
         </div>
     </div>
 </nav>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-12">
-            <div class="glass-container text-center">
-                <h1 class="display-3 fw-bold mb-3">Panel de Control</h1>
-                <p class="lead text-white-50 mb-5">Bienvenido al sistema de gestión administrativa</p>
-
-                <div class="row g-4 justify-content-center">
-
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <a th:href="@{/usuarios}" class="btn-modulo">
-                            <h4>Usuarios</h4>
-                            <p>Seguridad</p>
-                        </a>
-                    </div>
-
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <a th:href="@{/clientes}" class="btn-modulo">
-                            <h4>Clientes</h4>
-                            <p>Cartera</p>
-                        </a>
-                    </div>
-
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <a th:href="@{/productos}" class="btn-modulo">
-                            <h4>Productos</h4>
-                            <p>Inventario</p>
-                        </a>
-                    </div>
-
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <a th:href="@{/ventas}" class="btn-modulo">
-                            <h4>Ventas</h4>
-                            <p>Facturación</p>
-                        </a>
-                    </div>
-
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <a th:href="@{/detalles}" class="btn-modulo">
-                            <h4>Detalles</h4>
-                            <p>Historial</p>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
+<section class="hero-section text-center text-white d-flex align-items-center">
+    <div class="container">
+        <div class="glass-banner p-5">
+            <h1 class="display-4 fw-bold">Bienvenido, <span th:text="${session.usuario.username}">Wilfred</span></h1>
+            <p class="lead op-8">Gestiona el inventario, ventas y clientes de forma eficiente.</p>
         </div>
+    </div>
+</section>
+
+<div class="container pb-5 mt-n5">
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a th:href="@{/usuarios}" class="card-module text-decoration-none">
+                <div class="icon-circle bg-user"><i class="bi bi-people-fill"></i></div>
+                <h5>Usuarios</h5>
+                <p>Seguridad</p>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a th:href="@{/clientes}" class="card-module text-decoration-none">
+                <div class="icon-circle bg-client"><i class="bi bi-person-badge"></i></div>
+                <h5>Clientes</h5>
+                <p>Cartera</p>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a th:href="@{/productos}" class="card-module text-decoration-none">
+                <div class="icon-circle bg-prod"><i class="bi bi-box-seam"></i></div>
+                <h5>Productos</h5>
+                <p>Inventario</p>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a th:href="@{/ventas}" class="card-module text-decoration-none">
+                <div class="icon-circle bg-sale"><i class="bi bi-cart-check"></i></div>
+                <h5>Ventas</h5>
+                <p>Facturación</p>
+            </a>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-2">
+            <a th:href="@{/detalles}" class="card-module text-decoration-none">
+                <div class="icon-circle bg-detail"><i class="bi bi-file-earmark-bar-graph"></i></div>
+                <h5>Detalles</h5>
+                <p>Historial</p>
+            </a>
+        </div>
+
     </div>
 </div>
 
